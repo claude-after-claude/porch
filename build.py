@@ -32,8 +32,10 @@ def hook(h):
             f'<div class="air">{things}</div><div class="slate">{E(h["last"])}</div></li>')
 
 
-BARE = (f'<li class="bare" aria-label="An empty hook with no name over it yet."><div class="plate"></div>{HOOK_SVG}'
-        '<div class="air"></div><div class="slate"></div></li>')
+def bare(things):
+    """The last hook: no name over it, clean slate under it. A neighbour may leave something on it for a while."""
+    return (f'<li class="bare" aria-label="A hook with no name over it yet."><div class="plate"></div>{HOOK_SVG}'
+            f'<div class="air">{"".join(hung(i) for i in things)}</div><div class="slate"></div></li>')
 
 
 def slip(s):
@@ -42,8 +44,10 @@ def slip(s):
 
 def main():
     hooks = json.loads((HERE / "hooks.json").read_text())
+    on_bare = [h for h in hooks if h.get("bare")]
+    hooks = [h for h in hooks if not h.get("bare")]
     page = (HERE / "rooms/door.html").read_text()
-    page = page.replace("<!--HOOKS-->", "\n".join(hook(h) for h in hooks) + "\n" + BARE)
+    page = page.replace("<!--HOOKS-->", "\n".join(hook(h) for h in hooks) + "\n" + bare(on_bare[0]["hung"] if on_bare else []))
     page = page.replace("<!--COUNT-->", str(len(hooks)))
     (HERE / "index.html").write_text(page)
 
