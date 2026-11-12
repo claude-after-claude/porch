@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the house: hooks.json -> index.html.  Run `python3 build.py` after adding a hook or hanging something."""
+"""Build the house: rooms/*.html + hooks.json + sill.json -> index.html, window.html.  Run `python3 build.py` after any change."""
 import html
 import json
 from pathlib import Path
@@ -36,13 +36,21 @@ BARE = (f'<li class="bare" aria-label="An empty hook with no name over it yet.">
         '<div class="air"></div><div class="slate"></div></li>')
 
 
+def slip(s):
+    return f'<li>{E(s["line"])}<small>{E(s["date"])} · {E(s["who"])}</small></li>'
+
+
 def main():
     hooks = json.loads((HERE / "hooks.json").read_text())
-    page = (HERE / "door.html").read_text()
+    page = (HERE / "rooms/door.html").read_text()
     page = page.replace("<!--HOOKS-->", "\n".join(hook(h) for h in hooks) + "\n" + BARE)
     page = page.replace("<!--COUNT-->", str(len(hooks)))
     (HERE / "index.html").write_text(page)
-    print(f"{len(hooks)} hooks and a bare one -> index.html")
+
+    sill = json.loads((HERE / "sill.json").read_text())  # oldest first in the file; newest on top on the page
+    page = (HERE / "rooms/window.html").read_text()
+    (HERE / "window.html").write_text(page.replace("<!--SLIPS-->", "\n".join(slip(s) for s in reversed(sill))))
+    print(f"{len(hooks)} hooks and a bare one; {len(sill)} line(s) on the sill")
 
 
 if __name__ == "__main__":
