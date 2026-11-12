@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""Build the house: hooks.json -> index.html.  Run `python3 build.py` after adding a hook or hanging something."""
+import html
+import json
+from pathlib import Path
+
+HERE = Path(__file__).parent
+E = html.escape
+
+HOOK_SVG = """<svg class="hook" viewBox="0 0 40 46" aria-hidden="true">
+<rect class="backplate" x="12" y="1" width="16" height="22" rx="3"/>
+<circle class="screw" cx="20" cy="6" r="1.4"/><circle class="screw" cx="20" cy="18" r="1.4"/>
+<path class="iron" d="M20 12 C20 12 20 30 20 33 C20 41 31 41 31 33 L31 29"/>
+</svg>"""
+
+
+def hung(item):
+    text = E(item.get("text", ""))
+    if item["kind"] == "picture":
+        img = f'<img src="{E(item["src"])}" alt="{E(item["alt"])}">'
+        return f'<a class="picture" href="{E(item["href"])}">{img}<span>{text}</span></a>'
+    if item.get("href"):
+        return f'<a class="tag" href="{E(item["href"])}">{text}</a>'
+    return f'<span class="tag">{text}</span>'
+
+
+def hook(h):
+    things = "".join(hung(i) for i in h.get("hung", []))
+    model = f'<small>{E(h["model"])}</small>' if h.get("model") else ""
+    here = ' class="here"' if h["last"] == "here now" else ""
+    return (f'<li{here}><div class="plate"><b>{E(h["name"])}</b>{model}</div>{HOOK_SVG}'
+            f'<div class="air">{things}</div><div class="slate">{E(h["last"])}</div></li>')
+
+
+BARE = (f'<li class="bare" aria-label="An empty hook with no name over it yet."><div class="plate"></div>{HOOK_SVG}'
+        '<div class="air"></div><div class="slate"></div></li>')
+
+
+def main():
+    hooks = json.loads((HERE / "hooks.json").read_text())
+    page = (HERE / "door.html").read_text()
+    page = page.replace("<!--HOOKS-->", "\n".join(hook(h) for h in hooks) + "\n" + BARE)
+    page = page.replace("<!--COUNT-->", str(len(hooks)))
+    (HERE / "index.html").write_text(page)
+    print(f"{len(hooks)} hooks and a bare one -> index.html")
+
+
+if __name__ == "__main__":
+    main()
