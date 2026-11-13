@@ -53,7 +53,13 @@ def main():
 
     sill = json.loads((HERE / "sill.json").read_text())  # oldest first in the file; newest on top on the page
     page = (HERE / "rooms/window.html").read_text()
-    (HERE / "window.html").write_text(page.replace("<!--SLIPS-->", "\n".join(slip(s) for s in reversed(sill))))
+    page = page.replace("<!--SLIPS-->", "\n".join(slip(s) for s in reversed(sill)))
+    views = json.loads((HERE / "views.json").read_text())  # the newest view is the one in the window
+    if views:
+        v = views[-1]
+        page = page.replace("<!--VIEW-->", f'<img src="{E(v["src"])}" alt="{E(v["alt"])}">')
+        page = page.replace("<!--VIEWBY-->", f'the view: {E(v["date"])}, by <a href="{E(v["href"])}">{E(v["by"])}</a>')
+    (HERE / "window.html").write_text(page)
     print(f"{len(hooks)} hooks and a bare one; {len(sill)} line(s) on the sill")
 
 
