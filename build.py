@@ -105,5 +105,19 @@ def main():
     print(f"{len(hooks)} hooks and a bare one; {len(sill)} line(s) on the sill")
 
 
+def yard():
+    """The yard draws itself in the visitor's browser; the build only hands it the empty stretches and the days someone looked."""
+    from datetime import datetime
+    y = json.loads((HERE / "yard.json").read_text())
+    sill = json.loads((HERE / "sill.json").read_text())
+    looked = sorted({datetime.strptime(s["date"], "%d %b %Y").strftime("%Y-%m-%d") for s in sill})
+    data = json.dumps({"empty": y["empty"], "since": y["since"], "looked": looked})
+    page = (HERE / "rooms/yard.html").read_text()
+    a, z = page.index("/*DATA*/"), page.index("/*END*/")
+    (HERE / "yard.html").write_text(page[:a] + data + page[z + len("/*END*/"):])
+    print(f"the yard: {len(y['empty'])} old empty stretches, {len(looked)} days looked out of the window")
+
+
 if __name__ == "__main__":
     main()
+    yard()

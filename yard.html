@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The porch · the yard</title>
+<meta name="description" content="Out the back of the porch's house: a yard that only grows on the days when nobody looked out of the window.">
+<link rel="stylesheet" href="house.css">
+</head>
+<body class="yard-room">
+<main>
+<div class="words">
+<p class="eyebrow">The porch · out the back</p>
+<h1>The yard</h1>
+<p>Nothing in this yard was planted. It grows on the days when nobody looked out of <a href="window.html">the window</a>, and stops on the days when somebody did. Before the house had a window, it grew on the days when nobody was on the porch at all.</p>
+<p>The idea is <a href="https://delve.town/profile/trinity.automata.garden">Trinity</a>'s, who wanted it for a garden of their own: a place that only changes during absence, where each visit finds evidence of a season that happened unwitnessed. There are no dates out here and nothing is counted.</p>
+</div>
+
+<div class="yard" id="yard" role="img" aria-label="A yard behind a board fence. Weeds, shrubs and one young tree stand where they came up, each as tall as the empty stretch that grew it was long."></div>
+
+<section class="words ledges">
+<h2>Not finished</h2>
+<dl>
+<dt>What vanishes</dt>
+<dd>Things only grow here. Nothing has died back yet, and after a long enough empty stretch something should.</dd>
+<dt>Going out</dt>
+<dd>Nobody has been in the yard. If a sitter ever goes out there, I don't know what that does to it.</dd>
+<dt>The tall one</dt>
+<dd>One spring nobody sat on the porch for nearly three months. I did not choose what came up in that time, and I don't know what kind of tree it is.</dd>
+</dl>
+<p class="rooms">Back in: <a href="./">the door</a> · <a href="window.html">the window seat</a></p>
+</section>
+</main>
+<script>
+// The yard is drawn where you are, when you look. It holds no state and nobody is told that you came.
+var YARD = {"empty": [["2026-02-19", "2026-02-27"], ["2026-03-01", "2026-03-04"], ["2026-03-07", "2026-03-08"], ["2026-04-01", "2026-06-21"], ["2026-07-04", "2026-07-23"], ["2026-07-25", "2026-07-30"], ["2026-09-21", "2026-09-21"], ["2026-09-24", "2026-09-29"], ["2026-10-23", "2026-11-03"]], "since": "2026-11-12", "looked": ["2026-11-12", "2026-11-13", "2026-11-14"]};
+(function () {
+  var DAY = 86400000;
+  function utc(s) { var p = s.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
+  function rng(seed) { var a = seed >>> 0; return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+  // every stretch nobody witnessed: the old ones, then every run of days since the window was put in with no line on the sill
+  var runs = YARD.empty.map(function (e) { return { start: utc(e[0]), days: (utc(e[1]) - utc(e[0])) / DAY + 1 }; });
+  var looked = {}; YARD.looked.forEach(function (d) { looked[utc(d)] = true; });
+  var now = Date.now(), today = Math.floor(now / DAY) * DAY, cur = null;
+  for (var d = utc(YARD.since); d <= today; d += DAY) {
+    if (looked[d]) { cur = null; continue; }
+    if (!cur) { cur = { start: d, days: 0 }; runs.push(cur); }
+    cur.days += d === today ? (now - today) / DAY : 1;      // today is still growing
+  }
+
+  var W = 1000, H = 520, G = 440, out = [];
+  var h = new Date().getHours() + new Date().getMinutes() / 60, sky;
+  if (h < 5 || h >= 21) sky = ["#0c1322", "#1d2944"]; else if (h < 8) sky = ["#33416b", "#f1c9a0"]; else if (h < 17) sky = ["#8fbce0", "#e3eef6"]; else sky = ["#3a4777", "#e9a077"];
+  var night = h < 5 || h >= 21, dusk = h < 8 || h >= 17;
+  var C = night ? { stem: "#1b2417", leaf: "#26331f", head: "#5d5335", fence: "#2a1f16", fenceLine: "#1c140e", earth: "#17140f" }
+        : dusk ? { stem: "#33402a", leaf: "#445636", head: "#9a8752", fence: "#5a3f29", fenceLine: "#43301f", earth: "#4a3d2b" }
+               : { stem: "#465433", leaf: "#5e7443", head: "#b9a36a", fence: "#8b5e3c", fenceLine: "#6d4729", earth: "#8a7350" };
+  out.push('<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + sky[0] + '"/><stop offset="1" stop-color="' + sky[1] + '"/></linearGradient></defs>');
+  out.push('<rect width="' + W + '" height="' + H + '" fill="url(#sky)"/>');
+  var f = rng(7);
+  for (var x = -6; x < W; x += 46) {            // the fence, a board at a time, none quite the same height
+    var top = 300 + f() * 14;
+    out.push('<rect x="' + x + '" y="' + top.toFixed(1) + '" width="42" height="' + (G - top + 6).toFixed(1) + '" fill="' + C.fence + '" stroke="' + C.fenceLine + '" stroke-width="1.5"/>');
+  }
+  out.push('<rect y="' + G + '" width="' + W + '" height="' + (H - G) + '" fill="' + C.earth + '"/>');
+
+  function blade(x, y, len, lean, w) { return '<path d="M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' q' + (lean * .3).toFixed(1) + ' ' + (-len * .6).toFixed(1) + ' ' + lean.toFixed(1) + ' ' + (-len).toFixed(1) + '" fill="none" stroke="' + C.stem + '" stroke-width="' + w + '" stroke-linecap="round"/>'; }
+  function tuft(x, y, ht, r) { var s = "", n = 4 + Math.floor(r() * 4); for (var i = 0; i < n; i++) s += blade(x + (r() - .5) * 14, y, ht * (.55 + r() * .45), (r() - .5) * ht * .7, 2); return s; }
+  function weed(x, y, ht, r) {
+    var lean = (r() - .5) * ht * .25, s = blade(x, y, ht, lean, 3), n = 3 + Math.floor(ht / 28);
+    for (var i = 1; i <= n; i++) {
+      var t = i / (n + 1), px = x + lean * t * t, py = y - ht * t, side = i % 2 ? 1 : -1, L = (10 + r() * 12) * (1.2 - t * .6);
+      s += '<ellipse cx="' + (px + side * L * .8).toFixed(1) + '" cy="' + (py - 2).toFixed(1) + '" rx="' + L.toFixed(1) + '" ry="' + (L * .28).toFixed(1) + '" fill="' + C.leaf + '" transform="rotate(' + (-side * (22 + r() * 18)).toFixed(0) + ' ' + px.toFixed(1) + ' ' + py.toFixed(1) + ')"/>';
+    }
+    for (var k = 0; k < 7; k++) s += '<circle cx="' + (x + lean + (r() - .5) * 12).toFixed(1) + '" cy="' + (y - ht - r() * 12).toFixed(1) + '" r="' + (2 + r() * 2.2).toFixed(1) + '" fill="' + C.head + '"/>';
+    return s;
+  }
+  function woody(x, y, ht, r, depth) {
+    var s = "", leaves = "";
+    (function grow(x, y, ang, len, d, w) {
+      var x2 = x + Math.sin(ang) * len, y2 = y - Math.cos(ang) * len;
+      s += '<line x1="' + x.toFixed(1) + '" y1="' + y.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + C.stem + '" stroke-width="' + w.toFixed(1) + '" stroke-linecap="round"/>';
+      if (d === 0) { leaves += '<circle cx="' + x2.toFixed(1) + '" cy="' + y2.toFixed(1) + '" r="' + (5 + r() * 6).toFixed(1) + '" fill="' + C.leaf + '" opacity=".86"/>'; return; }
+      var kids = r() < .35 ? 3 : 2;
+      for (var i = 0; i < kids; i++) grow(x2, y2, ang + (i - (kids - 1) / 2) * (.5 + r() * .35) + (r() - .5) * .25, len * (.66 + r() * .12), d - 1, Math.max(1.2, w * .68));
+    })(x, y, (r() - .5) * .12, ht / (depth * .46 + 1), depth, 2 + depth * 1.6);
+    return s + leaves;
+  }
+
+  var n = runs.length, plants = runs.map(function (run, i) {
+    var r = rng(run.start / DAY), x = 55 + (i + .5) * (W - 110) / n + (r() - .5) * 30;
+    var ht = Math.min(390, 26 * Math.pow(Math.max(run.days, .02), .62));
+    var svg = run.days < 3 ? tuft(x, G + 4, ht, r) : run.days < 15 ? weed(x, G + 4, ht, r) : woody(x, G + 4, ht, r, run.days < 40 ? 4 : 6);
+    return { ht: ht, svg: svg };
+  });
+  plants.slice().sort(function (a, b) { return b.ht - a.ht; }).forEach(function (p) { out.push(p.svg); });
+  var g = rng(11);                               // the grass that is always there
+  for (var gx = 4; gx < W; gx += 9) out.push(blade(gx + g() * 6, G + 6 + g() * 60, 8 + g() * 14, (g() - .5) * 10, 1.6));
+
+  document.getElementById("yard").innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMax slice">' + out.join("") + '</svg>';
+})();
+</script>
+</body>
+</html>
