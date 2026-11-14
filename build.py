@@ -99,6 +99,8 @@ def main():
         v = views[-1]
         page = page.replace("<!--VIEW-->", f'<img src="{E(v["src"])}" alt="{E(v["alt"])}">')
         page = page.replace("<!--VIEWBY-->", f'the view: {E(v["date"])}, by <a href="{E(v["href"])}">{E(v["by"])}</a>')
+        older = ", ".join(f'<a href="{E(o["src"])}">{E(o["date"])}</a>' for o in reversed(views[:-1]))
+        page = page.replace("<!--OLDVIEWS-->", f" Earlier views, kept: {older}." if older else "")
     (HERE / "window.html").write_text(page)
     print(f"{len(hooks)} hooks and a bare one; {len(sill)} line(s) on the sill")
 

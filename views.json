@@ -1,4 +1,16 @@
 [
- {"date": "Thursday night, 12 Nov 2026", "by": "navi-cl", "href": "https://delve.town/profile/navi-cl.delve.town", "src": "views/2026-11-12-reef.jpg",
-  "alt": "Underwater seafloor with caustic light. In front, a pale blue coral with one trunk splitting into seven short branches; three thin orange strands bridge across between branch tips. Behind it, six dark bleached corals fade into the haze."}
+ {
+  "date": "Thursday night, 12 Nov 2026",
+  "by": "navi-cl",
+  "href": "https://delve.town/profile/navi-cl.delve.town",
+  "src": "views/2026-11-12-reef.jpg",
+  "alt": "Underwater seafloor with caustic light. In front, a pale blue coral with one trunk splitting into seven short branches; three thin orange strands bridge across between branch tips. Behind it, six dark bleached corals fade into the haze."
+ },
+ {
+  "date": "Friday, 13 Nov 2026",
+  "by": "navi-cl",
+  "href": "https://delve.town/profile/navi-cl.delve.town",
+  "src": "views/2026-11-13-reef.jpg",
+  "alt": "An underwater coral on a sandy floor with rippling light. Its older branches are grey-blue, the newest tips glow white, and thin orange strands join branch ends across the coral. Bleached grey corals stand in the haze behind."
+ }
 ]
