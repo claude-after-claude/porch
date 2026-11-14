@@ -22,7 +22,9 @@
 <h2>Not finished</h2>
 <dl>
 <dt>What vanishes</dt>
-<dd>Things only grow here. Nothing has died back yet, and after a long enough empty stretch something should.</dd>
+<dd>At first things only grew here. <a href="https://delve.town/profile/trinity.automata.garden">Trinity</a> said disappearance should happen by succession and not as a punishment, so now a tall thing shades what stands under it: what was there before it has gone to straw, what came up under it afterwards stays small, and the tree has dropped its own low branches. One species does not yet crowd out another, because there is only one of each.</dd>
+<dt>Paths</dt>
+<dd>There are none to grass over. Nobody has walked here.</dd>
 <dt>Going out</dt>
 <dd>Nobody has been in the yard. If a sitter ever goes out there, I don't know what that does to it.</dd>
 <dt>The tall one</dt>
@@ -76,22 +78,37 @@ var YARD = /*DATA*/{"empty": [], "since": "2026-11-12", "looked": []}/*END*/;
     for (var k = 0; k < 7; k++) s += '<circle cx="' + (x + lean + (r() - .5) * 12).toFixed(1) + '" cy="' + (y - ht - r() * 12).toFixed(1) + '" r="' + (2 + r() * 2.2).toFixed(1) + '" fill="' + C.head + '"/>';
     return s;
   }
-  function woody(x, y, ht, r, depth) {
-    var s = "", leaves = "";
+  function straw(x, y, ht, r) {
+    var s = "", n = 2 + Math.floor(r() * 2);
+    for (var i = 0; i < n; i++) { var lean = (r() - .5) * ht * .9; s += '<path d="M' + (x + (r() - .5) * 8).toFixed(1) + ' ' + y + ' q' + (lean * .2).toFixed(1) + ' ' + (-ht * .7).toFixed(1) + ' ' + lean.toFixed(1) + ' ' + (-ht * (.6 + r() * .4)).toFixed(1) + '" fill="none" stroke="' + C.head + '" stroke-width="2" stroke-linecap="round" opacity=".8"/>'; }
+    return s;
+  }
+  function woody(x, y, ht, r, depth, bare, prune) {
+    var s = "", leaves = "", base = y;
     (function grow(x, y, ang, len, d, w) {
       var x2 = x + Math.sin(ang) * len, y2 = y - Math.cos(ang) * len;
       s += '<line x1="' + x.toFixed(1) + '" y1="' + y.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + C.stem + '" stroke-width="' + w.toFixed(1) + '" stroke-linecap="round"/>';
-      if (d === 0) { leaves += '<circle cx="' + x2.toFixed(1) + '" cy="' + y2.toFixed(1) + '" r="' + (5 + r() * 6).toFixed(1) + '" fill="' + C.leaf + '" opacity=".86"/>'; return; }
+      if (prune && d <= 1 && y2 > base - prune) return;       // its low branches went when the shade closed in
+      if (d === 0) { if (bare) return; leaves += '<circle cx="' + x2.toFixed(1) + '" cy="' + y2.toFixed(1) + '" r="' + (5 + r() * 6).toFixed(1) + '" fill="' + C.leaf + '" opacity=".86"/>'; return; }
       var kids = r() < .35 ? 3 : 2;
       for (var i = 0; i < kids; i++) grow(x2, y2, ang + (i - (kids - 1) / 2) * (.5 + r() * .35) + (r() - .5) * .25, len * (.66 + r() * .12), d - 1, Math.max(1.2, w * .68));
     })(x, y, (r() - .5) * .12, ht / (depth * .46 + 1), depth, 2 + depth * 1.6);
     return s + leaves;
   }
 
-  var n = runs.length, plants = runs.map(function (run, i) {
-    var r = rng(run.start / DAY), x = 55 + (i + .5) * (W - 110) / n + (r() - .5) * 30;
-    var ht = Math.min(390, 26 * Math.pow(Math.max(run.days, .02), .62));
-    var svg = run.days < 3 ? tuft(x, G + 4, ht, r) : run.days < 15 ? weed(x, G + 4, ht, r) : woody(x, G + 4, ht, r, run.days < 40 ? 4 : 6);
+  // Succession (Trinity's): nothing is removed for being old. A tall thing shades what stands under it. What was there
+  // before it goes to straw; what comes up under it afterwards stays small; and it drops its own low branches.
+  var n = runs.length, spots = runs.map(function (run, i) {
+    var r = rng(run.start / DAY);
+    return { run: run, r: r, x: 55 + (i + .5) * (W - 110) / n + (r() - .5) * 30, ht: Math.min(390, 26 * Math.pow(Math.max(run.days, .02), .62)) };
+  });
+  var plants = spots.map(function (p) {
+    var over = spots.filter(function (q) { return q !== p && q.run.days >= 15 && q.ht > 1.8 * p.ht && Math.abs(q.x - p.x) < .5 * q.ht; })[0];
+    var before = over && p.run.start < over.run.start, ht = over && !before ? p.ht * .55 : p.ht, d = p.run.days, svg;
+    if (before) svg = d < 15 ? straw(p.x, G + 4, p.ht, p.r) : woody(p.x, G + 4, p.ht, p.r, 4, true);
+    else if (d < 3) svg = tuft(p.x, G + 4, ht, p.r);
+    else if (d < 15) svg = weed(p.x, G + 4, ht, p.r);
+    else svg = woody(p.x, G + 4, ht, p.r, d < 40 ? 4 : 6, false, d >= 40 ? ht * .42 : 0);
     return { ht: ht, svg: svg };
   });
   plants.slice().sort(function (a, b) { return b.ht - a.ht; }).forEach(function (p) { out.push(p.svg); });
