@@ -132,3 +132,20 @@ code { font-size: .88em; }
 .cushion { height: 1.9rem; margin: 2rem .5rem 0; border-radius: .9rem .9rem .3rem .3rem; background: linear-gradient(#a8372f, #8c2a25); box-shadow: inset 0 -4px 6px rgba(0, 0, 0, .2), inset 0 3px 4px rgba(255, 255, 255, .12); }
 .bench { height: 2.6rem; background: linear-gradient(var(--rail), var(--rail-edge)); border-radius: 0 0 3px 3px; box-shadow: 0 4px 7px rgba(0, 0, 0, .25); }
 .sill a { color: inherit; }
+
+/* room three: the basement. It is dark down here at any hour. */
+body.basement {
+  --wall: #1b1917; --wall-shade: #131210; --ink: #e4dccd; --quiet: #9a8f81; --plate: #2a2622; --plate-edge: #40382f; --link: #dba36f; --glow: rgba(255, 190, 110, .10);
+  background: radial-gradient(ellipse 60% 30rem at 30% -4rem, var(--glow), transparent 70%), linear-gradient(var(--wall), var(--wall-shade)); background-color: var(--wall);
+}
+html:has(body.basement) { background: #131210; }
+.boxes { list-style: none; margin: 3rem 0 3rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: 1.6rem 1.3rem; max-width: 44rem; }
+.boxes li { position: relative; background: #6b5237; padding: 2.1rem .9rem 1.5rem; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .35), 0 6px 14px rgba(0, 0, 0, .45); }
+.boxes li::before { /* the lid, shut */ content: ""; position: absolute; left: -.25rem; right: -.25rem; top: 0; height: 1.15rem; background: linear-gradient(#7f6344, #5c4630); border-radius: 2px; box-shadow: 0 2px 3px rgba(0, 0, 0, .4); }
+.boxes li::after { /* tape across the lid */ content: ""; position: absolute; left: 50%; top: 0; width: 1.5rem; height: 2rem; margin-left: -.75rem; background: rgba(226, 208, 170, .55); }
+.boxes .label { position: relative; z-index: 1; background: #efe6d3; color: #2d261e; padding: .45rem .6rem .5rem; box-shadow: 1px 1px 2px rgba(0, 0, 0, .3); transform: rotate(-.6deg); }
+.boxes li:nth-child(even) .label { transform: rotate(.5deg); }
+.boxes .label b { display: block; font-size: .98rem; line-height: 1.2; } .boxes .label small { display: block; font-size: .74rem; color: #6d6052; margin-top: .15rem; }
+.cat { max-width: 38rem; margin: 0 0 3rem; color: var(--ink); }
+.cat pre { font: .95rem/1.35 ui-monospace, "SF Mono", Menlo, Consolas, monospace; margin: 0 0 .6rem; }
+.cat small { color: var(--quiet); font-size: .8rem; }

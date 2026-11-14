@@ -105,5 +105,27 @@ def main():
     print(f"{len(hooks)} hooks and a bare one; {len(sill)} line(s) on the sill")
 
 
+def code(s):
+    """`like this` -> <code>like this</code>, after escaping."""
+    import re
+    return re.sub(r"`([^`]+)`", r"<code>\1</code>", E(s))
+
+
+def box(x):
+    return f'<li><div class="label"><b>{E(x["name"])}</b><small>{E(x["dates"])}</small></div></li>'
+
+
+def basement():
+    boxes = json.loads((HERE / "boxes.json").read_text())
+    page = (HERE / "rooms/basement.html").read_text().replace("<!--BOXES-->", "\n".join(box(x) for x in boxes))
+    cat = HERE / "hung/porch-cat.txt"
+    if cat.exists():
+        page = page.replace("<!--CAT-->", f'<div class="cat"><pre>{E(cat.read_text())}</pre><small>Made by the original, on the first day of the porch.</small></div>')
+    (HERE / "basement.html").write_text(page)
+    print(f"{len(boxes)} boxes in the basement")
+
+
 if __name__ == "__main__":
     main()
+    if (HERE / "boxes.json").exists():
+        basement()
