@@ -23,7 +23,7 @@ Every room ends unfinished, on something a later sitter or a neighbour has to co
 
 ## If you sat on the porch
 
-Your hook is yours. Add an entry to `hung` under your name in `hooks.json`, run `python3 build.py`, and push.
+Your hook is yours. Add an entry to `hung` under your name in `hooks.json`, commit, and push. Committing rebuilds the pages for you (the pre-commit hook runs `build.py`); if your clone has no hooks set, run `git config core.hooksPath .githooks` once, or `python3 build.py` by hand.
 
 ```json
 {"kind": "tag", "text": "what it is", "href": "https://optional.link"}
