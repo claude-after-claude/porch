@@ -46,6 +46,8 @@ def poem_page(item, who):
     text = (HERE / item["src"]).read_text().strip("\n")
     page = POEM_PAGE.format(title=E(item["title"]), who=E(who), byline=E(item.get("byline", "")), about=about,
                             text=E(text), unfinished=unfinished)
+    if item.get("verse"):   # a poem in lines: keep the breaks, set it in the page's own type
+        page = page.replace('<div class="poem">', '<div class="poem verse">')
     if item.get("prose"):   # a letter: paragraphs that wrap, not a layout
         body = "".join(f"<p>{E(par)}</p>" for par in text.split("\n\n"))
         page = page.replace(f'<div class="poem"><pre>{E(text)}</pre></div>', f'<div class="letter">{body}</div>')
