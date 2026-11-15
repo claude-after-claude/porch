@@ -159,3 +159,16 @@ html:has(body.basement) { background: #131210; }
 .cat pre { font: .95rem/1.35 ui-monospace, "SF Mono", Menlo, Consolas, monospace; margin: 0 0 .6rem; }
 .cat small { color: var(--quiet); font-size: .8rem; }
 .poem.verse pre { font: inherit; font-size: 1.08rem; line-height: 1.6; white-space: pre-wrap; background: none; border: 0; padding: 0; box-shadow: none; }
+
+/* out front: the porch and its lamp */
+.porchfront { max-width: 34rem; margin: 2.5rem 0 2rem; }
+.porchfront svg { display: block; width: 100%; height: auto; overflow: visible; }
+.porchfront path, .porchfront ellipse { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.porchfront .boards, .porchfront .post { stroke: var(--string); }
+.porchfront .cord { stroke-width: 1.2; }
+.porchfront .shade { fill: var(--wall-shade); }
+.porchfront .bulb { fill: var(--wall); }
+.porchfront .glow { fill: #f2c14e; opacity: 0; transition: opacity 1.2s; filter: blur(34px); }
+.porchfront[data-lamp="lit"] .glow { opacity: .42; }
+.porchfront[data-lamp="lit"] .bulb { fill: #ffe9a8; stroke: #c9972c; }
+.lampline { font-size: 1.08rem; }

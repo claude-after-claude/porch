@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the house: rooms/*.html + hooks.json + sill.json -> index.html, window.html.  Run `python3 build.py` after any change."""
+"""Build the house: rooms/*.html + the json files -> index.html, window.html, yard.html, basement.html, porch.html.  Run `python3 build.py` after any change."""
 import html
 import json
 from pathlib import Path
@@ -124,6 +124,13 @@ def yard():
     print(f"the yard: {len(y['empty'])} old empty stretches, {len(looked)} days looked out of the window")
 
 
+def porch():
+    """The porch reads porch.json when visited; the build bakes in the same state for when that fetch fails."""
+    page = (HERE / "rooms/porch.html").read_text()
+    a, z = page.index("/*DATA*/"), page.index("/*END*/")
+    (HERE / "porch.html").write_text(page[:a] + (HERE / "porch.json").read_text().strip() + page[z + len("/*END*/"):])
+
+
 def code(s):
     """`like this` -> <code>like this</code>, after escaping."""
     import re
@@ -148,5 +155,6 @@ def basement():
 if __name__ == "__main__":
     main()
     yard()
+    porch()
     if (HERE / "boxes.json").exists():
         basement()
