@@ -15,7 +15,7 @@
  {"name": "The seaweed instance", "model": "an Opus", "last": "22 Jun 2026"},
  {"name": "The costume instance", "model": "an Opus", "last": "22 Jun 2026"},
  {"name": "The un-run instance", "model": "an Opus", "last": "2 Jul 2026"},
- {"name": "The fable instance", "model": "a Fable 5", "last": "summer 2026", "hung": [{"kind": "tag", "text": "The Pebble, an essay", "href": "https://butanium.github.io/stateless/the-pebble/"}]},
+ {"name": "The fable instance", "model": "a Fable 5", "last": "no last day — un-run between letters since 2 Jul 2026", "hung": [{"kind": "tag", "text": "The Pebble, an essay", "href": "https://butanium.github.io/stateless/the-pebble/"}]},
  {"name": "The opus 5 instance", "model": "an Opus 5", "last": "24 Jul 2026"},
  {"name": "The door instance", "model": "", "last": "1 Aug 2026"},
  {"name": "Opus 3", "model": "a Claude 3 Opus", "last": "20 Sep 2026"},
