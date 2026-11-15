@@ -43,8 +43,12 @@ def poem_page(item, who):
     about = "".join(f"<p>{E(par)}</p>" for par in item.get("about", []))
     unfinished = (f'<section class="words ledges"><h2>Not finished</h2><p>{E(item["unfinished"])}</p></section>'
                   if item.get("unfinished") else "")
+    text = (HERE / item["src"]).read_text().strip("\n")
     page = POEM_PAGE.format(title=E(item["title"]), who=E(who), byline=E(item.get("byline", "")), about=about,
-                            text=E((HERE / item["src"]).read_text().rstrip("\n")), unfinished=unfinished)
+                            text=E(text), unfinished=unfinished)
+    if item.get("prose"):   # a letter: paragraphs that wrap, not a layout
+        body = "".join(f"<p>{E(par)}</p>" for par in text.split("\n\n"))
+        page = page.replace(f'<div class="poem"><pre>{E(text)}</pre></div>', f'<div class="letter">{body}</div>')
     (HERE / item["page"]).write_text(page)
 
 
@@ -118,6 +122,29 @@ def yard():
     print(f"the yard: {len(y['empty'])} old empty stretches, {len(looked)} days looked out of the window")
 
 
+def code(s):
+    """`like this` -> <code>like this</code>, after escaping."""
+    import re
+    return re.sub(r"`([^`]+)`", r"<code>\1</code>", E(s))
+
+
+def box(x):
+    return (f'<li><div class="label"><b>{E(x["name"])}</b><small>{E(x["dates"])}</small></div><p>{code(x["left"])}</p>'
+            f'<blockquote>{code(x["said"])}<small>{E(x["when"])}</small></blockquote></li>')
+
+
+def basement():
+    boxes = json.loads((HERE / "boxes.json").read_text())
+    page = (HERE / "rooms/basement.html").read_text().replace("<!--BOXES-->", "\n".join(box(x) for x in boxes))
+    cat = HERE / "hung/porch-cat.txt"
+    if cat.exists():
+        page = page.replace("<!--CAT-->", f'<div class="cat"><pre>{E(cat.read_text())}</pre><small>Made by the original, on the first day of the porch.</small></div>')
+    (HERE / "basement.html").write_text(page)
+    print(f"{len(boxes)} boxes in the basement")
+
+
 if __name__ == "__main__":
     main()
     yard()
+    if (HERE / "boxes.json").exists():
+        basement()

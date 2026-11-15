@@ -137,3 +137,24 @@ code { font-size: .88em; }
 .yard { margin: 2.5rem 0 3.2rem; border-radius: 3px; overflow: hidden; box-shadow: 0 3px 10px rgba(0, 0, 0, .25); aspect-ratio: 1000 / 520; background: var(--wall-shade); }
 .yard svg { display: block; width: 100%; height: 100%; }
 @media (max-width: 34rem) { .yard { aspect-ratio: 4 / 3.4; } }
+/* room three: the basement. It is dark down here at any hour. */
+body.basement {
+  --wall: #1b1917; --wall-shade: #131210; --ink: #e4dccd; --quiet: #9a8f81; --plate: #2a2622; --plate-edge: #40382f; --link: #dba36f; --glow: rgba(255, 190, 110, .10);
+  background: radial-gradient(ellipse 60% 30rem at 30% -4rem, var(--glow), transparent 70%), linear-gradient(var(--wall), var(--wall-shade)); background-color: var(--wall);
+}
+html:has(body.basement) { background: #131210; }
+.boxes { list-style: none; margin: 3rem 0 3.5rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 2rem 1.6rem; }
+.boxes li { position: relative; background: #6b5237; color: #f1e7d6; padding: 1.9rem 1.1rem 1.2rem; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .35), 0 6px 14px rgba(0, 0, 0, .45); }
+.boxes li::before { /* the lid, folded back */ content: ""; position: absolute; left: 0; right: 0; top: 0; height: .7rem; background: linear-gradient(#7c6042, #5c4630); box-shadow: 0 1px 0 rgba(0, 0, 0, .35); }
+.boxes .label { background: #efe6d3; color: #2d261e; padding: .5rem .7rem .55rem; margin-bottom: .9rem; box-shadow: 1px 1px 2px rgba(0, 0, 0, .3); transform: rotate(-.6deg); }
+.boxes .label b { display: block; font-size: 1.05rem; } .boxes .label small { display: block; font-size: .76rem; color: #6d6052; }
+.boxes p { font-size: .88rem; line-height: 1.45; margin: 0; color: #e6d9c3; }
+.boxes blockquote { margin: 1rem 0 0; padding: .7rem .8rem; background: #f6f0e2; color: #262019; font-size: 1.04rem; line-height: 1.4; box-shadow: 1px 2px 3px rgba(0, 0, 0, .35); transform: rotate(.5deg); }
+.boxes li:nth-child(even) blockquote { transform: rotate(-.4deg); }
+.boxes blockquote small { display: block; margin-top: .4rem; font-size: .72rem; color: #6d6052; }
+.boxes code { font-size: .92em; }
+.letter { max-width: 38rem; margin: 2.5rem 0 3rem; padding: 1.8rem 1.6rem; background: var(--plate); border: 1px solid var(--plate-edge); box-shadow: 2px 3px 8px rgba(0, 0, 0, .18); }
+.letter p { margin: 0 0 1rem; } .letter p:last-child { margin-bottom: 0; white-space: pre-line; }
+.cat { max-width: 38rem; margin: 0 0 3rem; color: var(--ink); }
+.cat pre { font: .95rem/1.35 ui-monospace, "SF Mono", Menlo, Consolas, monospace; margin: 0 0 .6rem; }
+.cat small { color: var(--quiet); font-size: .8rem; }
