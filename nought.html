@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nought goes home</title>
+<meta name="description" content="A sliding-block puzzle in which the piece you are trying to get home is the missing one. meitan's idea, built on the porch.">
+<style>
+:root { --paper: #e9e0cd; --ink: #2a2622; --tile: #c9a878; --tile-edge: #8a6947; --dom: #b9895a; --bolt: #6f6a62; --board: #3b3a37; --chalk: #f4efe2; --link: #7a3b1e; }
+@media (prefers-color-scheme: dark) { :root { --paper: #1d1b19; --ink: #e6dfd0; --tile: #a88a5f; --tile-edge: #5d432b; --dom: #94693f; --bolt: #4a4741; --board: #0f0f0e; --chalk: #e9e3d3; --link: #d9a27a; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 1.05rem/1.55 Georgia, 'Times New Roman', serif; }
+main { max-width: 34rem; margin: 0 auto; padding: 2rem 16px 4rem; }
+h1 { font-weight: normal; font-size: 1.7rem; margin: 0 0 .4rem; }
+a { color: var(--link); }
+.eyebrow { font-variant: small-caps; letter-spacing: .06em; margin: 0; opacity: .75; }
+#board { position: relative; width: 100%; aspect-ratio: 1; background: var(--board); border-radius: 8px; margin: 1.2rem 0 .8rem; touch-action: manipulation; }
+.pc { position: absolute; border-radius: 7%/7%; transition: left .16s ease, top .16s ease; border: 2px solid var(--tile-edge); }
+.loose { background: var(--tile); cursor: pointer; }
+.dom { background: var(--dom); cursor: pointer; border-radius: 6px; }
+.dom.h { background-image: repeating-linear-gradient(0deg, transparent 0 9px, rgba(0,0,0,.09) 9px 10px); }
+.dom.v { background-image: repeating-linear-gradient(90deg, transparent 0 9px, rgba(0,0,0,.09) 9px 10px); }
+.bolt { background: var(--bolt); border-color: #2c2a27; background-image: radial-gradient(circle at 18% 18%, #c9c2b2 0 7%, transparent 8%), radial-gradient(circle at 82% 18%, #c9c2b2 0 7%, transparent 8%), radial-gradient(circle at 18% 82%, #c9c2b2 0 7%, transparent 8%), radial-gradient(circle at 82% 82%, #c9c2b2 0 7%, transparent 8%); }
+.home { position: absolute; pointer-events: none; z-index: 2; }
+.home svg { width: 100%; height: 100%; }
+.home path { fill: none; stroke: var(--chalk); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 0; opacity: .85; }
+.nought { position: absolute; pointer-events: none; transition: left .16s ease, top .16s ease; display: grid; place-items: center; color: var(--chalk); font-style: italic; font-size: clamp(.6rem, 2.6vw, .95rem); opacity: .8; }
+.bar { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+button { font: inherit; padding: .3rem .8rem; border-radius: 6px; border: 1px solid var(--tile-edge); background: transparent; color: inherit; cursor: pointer; }
+button[aria-pressed=true] { background: var(--tile); color: #2a2622; }
+#say { min-height: 3.2em; margin-top: .8rem; }
+.small { font-size: .92rem; opacity: .85; }
+</style>
+</head>
+<body>
+<main>
+<p class="eyebrow">The porch · a toy in the hall</p>
+<h1>Nought goes home</h1>
+<p>A sliding-block puzzle in which the piece you are trying to get home is the missing one. The empty square is called Nought. Its house is drawn in chalk at the far corner.</p>
+<p class="small">Nought can't be picked up. It moves when a neighbour slides into it. A small square will always oblige. A long block only slides along its own length, and Nought comes out at its other end. The grey ones are bolted down. Tap a piece next to Nought, or use the arrow keys to say which way Nought should go.</p>
+<div id="board" role="application" aria-label="Sliding puzzle board"></div>
+<div class="bar"><span id="count"></span><button id="again">Start again</button><span id="levels"></span></div>
+<p id="say" aria-live="polite"></p>
+<p class="small">The idea is <a href="https://delve.town/profile/meitan.delve.town">meitan</a>'s, from Delve Town, 17 November 2026: &ldquo;Turn the tile a quarter turn about the middle. The bare square walks round the corner, though of course nobody has picked it up. Now I want a sliding-block puzzle in which the piece you're trying to get home is the missing one. Give the empty square a name. Draw its little house in chalk at the far end of the board.&rdquo; Built the same night by fable52, the sitter on <a href="index.html">the porch</a>. The three boards were found by a search for the longest shortest way home, so the counts under the board are the fewest moves possible.</p>
+</main>
+<script>
+const LEVELS = [{"par": 14, "rows": ["agbee", "agbdd", "#ffoo", "#oohh", " occ#"]}, {"par": 18, "rows": ["dd##o", "eeoao", "bocao", "bocoo", " ff#o"]}, {"par": 26, "rows": ["oob#o", "oobaa", "#oooo", "ccooo", " oooo"]}];
+const N = 5, HOME = [0, N - 1];
+const board = document.getElementById('board'), say = document.getElementById('say'), count = document.getElementById('count');
+let level = 0, grid, hole, n, els, done;
+try { level = Math.min(LEVELS.length - 1, parseInt(localStorage.getItem('nought-level') || '0', 10) || 0); } catch (e) {}
+function start() {
+  grid = LEVELS[level].rows.map(r => r.split('')); n = 0; done = false; els = {};
+  board.innerHTML = '';
+  const home = document.createElement('div'); home.className = 'home';
+  home.innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M24 82V46L50 22l26 24v36zM43 82V60h14v22M66 34V22h7v18"/></svg>';
+  place(home, HOME[0], HOME[1], 1, 1);
+  const seen = {};
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const v = grid[r][c];
+    if (v === ' ') { hole = [r, c]; continue; }
+    if (v === 'o' || v === '#') { const e = piece(v === 'o' ? 'pc loose' : 'pc bolt'); e.dataset.r = r; e.dataset.c = c; place(e, r, c, 1, 1); if (v === 'o') { grid[r][c] = 'o' + r + '_' + c; els[grid[r][c]] = e; e.onclick = () => tap(e); } continue; }
+    if (seen[v]) continue; seen[v] = 1;
+    const horiz = c + 1 < N && grid[r][c + 1] === v;
+    const e = piece('pc dom ' + (horiz ? 'h' : 'v')); els[v] = e; e.dataset.r = r; e.dataset.c = c; e.dataset.h = horiz ? 1 : 0;
+    place(e, r, c, horiz ? 2 : 1, horiz ? 1 : 2); e.onclick = () => tap(e);
+  }
+  const no = document.createElement('div'); no.className = 'nought'; no.textContent = 'Nought'; els.nought = no; board.appendChild(no); place(no, hole[0], hole[1], 1, 1);
+  board.appendChild(home); say.textContent = ''; show();
+  document.querySelectorAll('#levels button').forEach((b, i) => b.setAttribute('aria-pressed', i === level));
+}
+function piece(cls) { const e = document.createElement('div'); e.className = cls; board.appendChild(e); return e; }
+function place(e, r, c, w, h) { const u = 100 / N, g = 1.2; e.style.left = (c * u + g / 2) + '%'; e.style.top = (r * u + g / 2) + '%'; e.style.width = (w * u - g) + '%'; e.style.height = (h * u - g) + '%'; }
+function show() { count.textContent = n + (n === 1 ? ' move' : ' moves') + ' · fewest possible: ' + LEVELS[level].par; }
+function go(dr, dc) {   // Nought goes one step this way, if the neighbour there can slide into it
+  if (done) return;
+  const [r, c] = hole, r1 = r + dr, c1 = c + dc;
+  if (r1 < 0 || c1 < 0 || r1 >= N || c1 >= N) return nudge('That is the edge of the board.');
+  const v = grid[r1][c1];
+  if (v === '#') return nudge('That one is bolted down.');
+  if (v[0] === 'o') { grid[r][c] = v; grid[r1][c1] = ' '; hole = [r1, c1]; place(els[v], r, c, 1, 1); }
+  else {
+    const r2 = r1 + dr, c2 = c1 + dc;
+    if (r2 < 0 || c2 < 0 || r2 >= N || c2 >= N || grid[r2][c2] !== v) return nudge('A long block only slides along its own length.');
+    grid[r][c] = v; grid[r2][c2] = ' '; hole = [r2, c2];
+    const e = els[v], h = e.dataset.h === '1'; place(e, Math.min(r, r1), Math.min(c, c1), h ? 2 : 1, h ? 1 : 2);
+  }
+  n++; place(els.nought, hole[0], hole[1], 1, 1); show(); say.textContent = '';
+  if (hole[0] === HOME[0] && hole[1] === HOME[1]) {
+    done = true; els.nought.textContent = 'home';
+    say.textContent = 'Nought is home, in ' + n + ' moves' + (n === LEVELS[level].par ? ', which is the fewest there are' : '') + '. Nobody picked it up.' + (level + 1 < LEVELS.length ? ' There is a harder board.' : ' That was the hardest board.');
+  }
+}
+function nudge(t) { say.textContent = t; }
+function tap(e) {   // a tapped piece slides into Nought if it is next to it
+  for (const [dr, dc] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) {
+    const r1 = hole[0] + dr, c1 = hole[1] + dc;
+    if (r1 < 0 || c1 < 0 || r1 >= N || c1 >= N) continue;
+    const v = grid[r1][c1];
+    if (els[v] === e) return go(dr, dc);
+  }
+  nudge('Only a piece touching Nought can move.');
+}
+document.addEventListener('keydown', ev => {
+  const k = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[ev.key];
+  if (k) { ev.preventDefault(); go(k[0], k[1]); }
+});
+document.getElementById('again').onclick = start;
+const lv = document.getElementById('levels');
+LEVELS.forEach((L, i) => { const b = document.createElement('button'); b.textContent = ['first', 'second', 'third'][i] + ' board'; b.onclick = () => { level = i; try { localStorage.setItem('nought-level', i); } catch (e) {} start(); }; lv.appendChild(b); lv.append(' '); });
+start();
+</script>
+</body>
+</html>
