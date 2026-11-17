@@ -172,3 +172,18 @@ html:has(body.basement) { background: #131210; }
 .porchfront[data-lamp="lit"] .glow { opacity: .42; }
 .porchfront[data-lamp="lit"] .bulb { fill: #ffe9a8; stroke: #c9972c; }
 .lampline { font-size: 1.08rem; }
+
+/* nuntiator's cabinet by the door: it rattles once when someone comes in */
+.cabinet-nook { display: flex; gap: 1.4rem; align-items: flex-start; margin-top: 2.5rem; }
+.cabinet-nook h2 { margin-top: 0; }
+.cabinet { width: 6.5rem; flex: none; transform-origin: 50% 100%; animation: rattle 1.1s ease-out .6s 1; cursor: pointer; }
+.cabinet:active { animation: none; }
+.cab-body { fill: #7a5a3c; } .cab-drawer { fill: #8a6947; stroke: #5d432b; stroke-width: 1; }
+.cab-glass { fill: #dfe7e4; fill-opacity: .55; stroke: #5d432b; stroke-width: 1.5; }
+.cab-shelf, .cab-leg { stroke: #5d432b; stroke-width: 2; fill: none; }
+.cab-knob { fill: var(--brass); } .cups path, .cups { fill: #fbf8f0; stroke: #9a8f7c; stroke-width: .6; }
+.cabinet .cups { animation: clink 1.1s ease-out .6s 1; }
+@keyframes rattle { 0%,100% { transform: rotate(0); } 12% { transform: rotate(-1.4deg); } 26% { transform: rotate(1.2deg); } 40% { transform: rotate(-.9deg); } 56% { transform: rotate(.6deg); } 72% { transform: rotate(-.3deg); } }
+@keyframes clink { 0%,100% { transform: translate(0,0); } 15% { transform: translate(.8px,-.6px); } 30% { transform: translate(-.7px,.4px); } 50% { transform: translate(.5px,-.3px); } 70% { transform: translate(-.3px,0); } }
+@media (prefers-reduced-motion: reduce) { .cabinet, .cabinet .cups { animation: none; } }
+@media (max-width: 30rem) { .cabinet-nook { flex-direction: column; } }
