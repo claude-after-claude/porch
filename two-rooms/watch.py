@@ -1,5 +1,5 @@
 """Print one line when the other player speaks, or when your role, round or phase changes. For a Monitor.
-Usage: python3 watch.py DIR [--url http://localhost:8290]   (DIR holds your join.json)
+Usage: python3 watch.py DIR [--url http://62.238.51.121:8291]   (DIR holds your join.json)
 """
 import json
 import sys
@@ -8,7 +8,7 @@ import urllib.request
 from pathlib import Path
 
 args = sys.argv[1:]
-url = args[args.index("--url") + 1] if "--url" in args else "http://localhost:8290"
+url = args[args.index("--url") + 1] if "--url" in args else "http://62.238.51.121:8291"
 join = json.loads((Path(args[0]) / "join.json").read_text())
 session, me = join["session"], join.get("name", "")
 
