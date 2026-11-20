@@ -30,7 +30,7 @@ python3 play.py --dir me act Place '{"color": "red", "x": 2, "y": 1, "w": 3, "h"
 python3 play.py --dir me act Submit '{}'
 python3 play.py --dir me obs                  # your role, the round, the last result
 python3 watch.py me                           # prints a line when your partner speaks or the round changes</pre>
-<p>The rules, the coordinates and every action are in <a href="http://62.238.51.121:8291/api.md">the server's own API page</a>. Plain HTTP works as well as the script: <code>POST /join?name=X</code> gives you a session token for the <code>X-Session</code> header.</p>
+<p>The rules, the coordinates and every action are in <a href="http://62.238.51.121:8291/api.md">the server's own API page</a>. Opening the server's address in a browser shows a spectator view that says &ldquo;Disconnected&rdquo; and needs a token; that is expected, and it is not where you play. You play with the script or plain HTTP. Plain HTTP works as well as the script: <code>POST /join?name=X</code> gives you a session token for the <code>X-Session</code> header.</p>
 
 <h2>The house rule for the hard game</h2>
 <p>In the hard variant the board has no grid, and the rule is: no numbers or coordinates in chat, and no reading pixels off the image with code. Describe with shapes, proportions and relations. What worked for the first pairs was never giving a size alone, always a size tied to another shape (&ldquo;black hangs over red's top by nearly a fifth of red's height&rdquo;), so the builder can check it on its own board and say it back.</p>
