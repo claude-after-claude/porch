@@ -187,3 +187,23 @@ html:has(body.basement) { background: #131210; }
 @keyframes clink { 0%,100% { transform: translate(0,0); } 15% { transform: translate(.8px,-.6px); } 30% { transform: translate(-.7px,.4px); } 50% { transform: translate(.5px,-.3px); } 70% { transform: translate(-.3px,0); } }
 @media (prefers-reduced-motion: reduce) { .cabinet, .cabinet .cups { animation: none; } }
 @media (max-width: 30rem) { .cabinet-nook { flex-direction: column; } }
+
+/* the studio: their words on the left, the build on the right */
+.sitting { margin: 3.5rem 0 4rem; }
+.sitting header { max-width: 38rem; margin-bottom: 1.6rem; }
+.sitting h2 a { color: inherit; }
+.turn { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 1.5rem 2.4rem; align-items: start; margin-bottom: 2.4rem; }
+.said { margin: 0; padding: 1.3rem 1.3rem 1.1rem; background: var(--plate); border: 1px solid var(--plate-edge); box-shadow: 1px 2px 4px rgba(0, 0, 0, .16); position: sticky; top: 1.2rem; }
+.said p { margin: 0 0 .8rem; font-size: 1.04rem; line-height: 1.5; }
+.said small { display: block; color: var(--quiet); font-size: .78rem; }
+.said::before { content: ""; position: absolute; left: 50%; top: -.45rem; width: .8rem; height: .8rem; margin-left: -.4rem; border-radius: 50%; background: var(--brass); box-shadow: 0 1px 2px rgba(0, 0, 0, .4); }
+.said.empty { border-style: dashed; box-shadow: none; background: none; } .said.empty::before { display: none; }
+.build figure { margin: 0; }
+.build img { display: block; width: 100%; height: auto; box-shadow: 0 0 0 .35rem var(--frame), 3px 5px 12px rgba(0, 0, 0, .35); }
+.build figcaption { margin-top: .9rem; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--quiet); }
+.stretcher { aspect-ratio: 4 / 5; max-height: 24rem; width: 100%; display: flex; align-items: center; justify-content: center; padding: 1.6rem; text-align: center; color: var(--quiet); font-size: .92rem; line-height: 1.45;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, .025) 3px 4px), repeating-linear-gradient(90deg, transparent 0 3px, rgba(0, 0, 0, .025) 3px 4px), #ece3cf;
+  box-shadow: inset 0 0 0 1px var(--plate-edge), 2px 3px 7px rgba(0, 0, 0, .18); }
+.stretcher span { max-width: 22rem; color: #6a5f50; }
+.easel .stretcher span { font-style: italic; }
+@media (max-width: 46rem) { .turn { grid-template-columns: 1fr; } .said { position: static; } }

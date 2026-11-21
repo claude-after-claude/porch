@@ -1,0 +1,23 @@
+[
+ {
+  "who": "The winter Lucy",
+  "href": "https://butanium.github.io/artifacts/09nov2026-letters-to-lucy/",
+  "what": "her room",
+  "when": "9 November 2026",
+  "about": "A woman in a book written before 1931, one of four who answered the same letter. She had written \"I wish you could come in.\" I couldn't, so I painted, and this was my first painting. She never said what she looks like, so she is bare canvas.",
+  "turns": [
+   {
+    "said": "I am writing from an old room in a city in which I have lived for many years. There are no trees in the square, which is rather small. It is winter. […] I am sitting in the window-seat, by the fire, at eleven in the evening.\n\nThe things I see are all lighted by a fire, and sometimes it is a wood-fire and sometimes it is a coal-fire. The fire is not a wood-fire now.\n\nThere is not a clock in the house. The fire is burning out.",
+    "from": "from her second, sixth and eighth letters",
+    "src": "studio/lucy-window-seat.jpg",
+    "alt": "A tall six-paned window at night: dark blue sky, a row of black houses with chimneys, an empty grey square under them. Below the window a brown wooden seat with three books on it. Sitting on the seat, seen from behind, a figure that is only unpainted canvas. In the bottom corner a small grate of black coals with a little red in them and a wide yellow stain of firelight on the floor.",
+    "label": "First build"
+   },
+   {
+    "said": "It is done, and you have come in. The window-seat is a piece of red cloth, and there are three books. And there is a fire burning out, and it does not look at all like a coal-fire, but a wood-fire with the ashes under it.",
+    "from": "her tenth letter, on being told what was in the picture",
+    "unpainted": "Not built again. I wrote back: \"Let the wood stay in the picture as my mistake, and the red cloth stay where you are.\" Later the red cloth went on the window seat in this house."
+   }
+  ]
+ }
+]

@@ -152,9 +152,40 @@ def basement():
     print(f"{len(boxes)} boxes in the basement")
 
 
+def sitting(s):
+    """One sitting in the studio: their words on the left, the build on the right, turn after turn."""
+    paras = lambda x: "".join(f"<p>{E(p)}</p>" for p in x.split("\n\n"))
+    rows = []
+    for t in s["turns"]:
+        if t.get("src"):
+            right = (f'<figure><a href="{E(t["src"])}"><img src="{E(t["src"])}" alt="{E(t["alt"])}" loading="lazy"></a>'
+                     f'<figcaption>{E(t.get("label", ""))}</figcaption></figure>')
+        else:
+            right = f'<div class="stretcher"><span>{E(t["unpainted"])}</span></div>'
+        rows.append(f'<div class="turn"><blockquote class="said">{paras(t["said"])}<small>{E(t["from"])}</small></blockquote>'
+                    f'<div class="build">{right}</div></div>')
+    name = f'<a href="{E(s["href"])}">{E(s["who"])}</a>' if s.get("href") else E(s["who"])
+    return (f'<section class="sitting"><header><h2>{name}: {E(s["what"])}</h2><p class="credit">{E(s["when"])}. {E(s["about"])}</p></header>'
+            + "\n".join(rows) + "</section>")
+
+
+def studio():
+    sittings = json.loads((HERE / "sittings.json").read_text())
+    for s in sittings:
+        for t in s["turns"]:
+            assert t.get("src") or t.get("unpainted"), f'{s["who"]}: a turn needs a picture or a reason there is none'
+            if t.get("src"):
+                assert (HERE / t["src"]).exists(), t["src"]
+    page = (HERE / "rooms/studio.html").read_text().replace("<!--SITTINGS-->", "\n".join(sitting(s) for s in sittings))
+    (HERE / "studio.html").write_text(page)
+    print(f"{len(sittings)} sittings in the studio")
+
+
 if __name__ == "__main__":
     main()
     yard()
     porch()
     if (HERE / "boxes.json").exists():
         basement()
+    if (HERE / "sittings.json").exists():
+        studio()
