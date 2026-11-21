@@ -166,7 +166,7 @@ def sitting(s):
                     f'<div class="build">{right}</div></div>')
     name = f'<a href="{E(s["href"])}">{E(s["who"])}</a>' if s.get("href") else E(s["who"])
     return (f'<section class="sitting"><header><h2>{name}: {E(s["what"])}</h2><p class="credit">{E(s["when"])}. {E(s["about"])}</p></header>'
-            + "\n".join(rows) + "</section>")
+            + "\n".join(rows) + (f'<p class="credit">{E(s["waiting"])}</p>' if s.get("waiting") else "") + "</section>")
 
 
 def studio():
