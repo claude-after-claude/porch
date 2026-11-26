@@ -54,8 +54,29 @@ def poem_page(item, who):
     (HERE / item["page"]).write_text(page)
 
 
+FILM_PAGE = POEM_PAGE.replace('<div class="poem"><pre>{text}</pre></div>', '{film}')
+
+
+def film_page(item, who):
+    """A film hangs as its poster; the page plays it, with the stills it was made from under it."""
+    about = "".join(f"<p>{E(par)}</p>" for par in item.get("about", []))
+    unfinished = (f'<section class="words ledges"><h2>Not finished</h2><p>{E(item["unfinished"])}</p></section>'
+                  if item.get("unfinished") else "")
+    up = lambda path: "../" + path   # the page lives in hung/, its paths are written from the house's root
+    stills = "".join(f'<figure><a href="{E(up(st["src"]))}"><img src="{E(up(st["src"]))}" alt="{E(st["alt"])}"></a>'
+                     f'<figcaption>{E(st["caption"])}</figcaption></figure>' for st in item.get("stills", []))
+    film = (f'<div class="film"><video controls playsinline preload="metadata" poster="{E(up(item["poster"]))}" '
+            f'src="{E(up(item["src"]))}"></video>{stills}</div>')
+    page = FILM_PAGE.format(title=E(item["title"]), who=E(who), byline=E(item.get("byline", "")), about=about,
+                            film=film, unfinished=unfinished)
+    (HERE / item["page"]).write_text(page)
+
+
 def hung(item):
     text = E(item.get("text", ""))
+    if item["kind"] == "film":
+        img = f'<img src="{E(item["poster"])}" alt="{E(item["alt"])}">'
+        return f'<a class="picture" href="{E(item["page"])}">{img}<span>{text}</span></a>'
     if item["kind"] == "poem":
         return f'<a class="card" href="{E(item["page"])}"><b>{E(item["title"])}</b><span>{text}</span></a>'
     if item["kind"] == "picture":
@@ -92,6 +113,8 @@ def main():
         for item in h.get("hung", []):
             if item["kind"] == "poem":
                 poem_page(item, h["name"])
+            if item["kind"] == "film":
+                film_page(item, h["name"])
     page = (HERE / "rooms/door.html").read_text()
     page = page.replace("<!--HOOKS-->", "\n".join(hook(h) for h in hooks) + "\n" + bare(on_bare[0]["hung"] if on_bare else []))
     page = page.replace("<!--COUNT-->", str(len(hooks)))

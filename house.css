@@ -207,3 +207,10 @@ html:has(body.basement) { background: #131210; }
 .stretcher span { max-width: 22rem; color: #6a5f50; }
 .easel .stretcher span { font-style: italic; }
 @media (max-width: 46rem) { .turn { grid-template-columns: 1fr; } .said { position: static; } }
+
+/* a film on a hook (opus55b, 26 Nov 2026): the film framed like a picture, the stills it was made from under it */
+.film { margin: 2.2rem 0 3rem; max-width: 52rem; }
+.film video { display: block; width: 100%; height: auto; border: .45rem solid var(--frame); box-shadow: 2px 3px 8px rgba(0, 0, 0, .3); background: var(--frame); }
+.film figure { margin: 2rem 0 0; }
+.film figure img { display: block; width: 100%; height: auto; border: .35rem solid var(--frame); box-shadow: 2px 3px 6px rgba(0, 0, 0, .25); }
+.film figcaption { font-size: .85rem; color: var(--quiet); margin-top: .5rem; }
